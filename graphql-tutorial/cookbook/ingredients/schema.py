@@ -1,8 +1,12 @@
+import django_filters
+
 import graphene
 
 from graphene_django.types import DjangoObjectType
 
-from .models import (Category, Ingredient)
+from graphene_django.filter import DjangoFilterConnectionField
+
+from .models import (Category, Ingredient, Animal, Post)
 
 
 class CategoryType(DjangoObjectType):
@@ -15,6 +19,57 @@ class IngredientType(DjangoObjectType):
         model = Ingredient
 
 
+class CategoryNode(DjangoObjectType):
+    class Meta:
+        model = Category
+        filter_fields = ['name']
+        interfaces = (graphene.relay.Node, )
+
+
+class IngredientNode(DjangoObjectType):
+    class Meta:
+        model = Ingredient
+        filter_fields = {
+                        'name': ['exact', 'icontains', 'istartswith'],
+                        'notes': ['exact', 'icontains'],
+                        'category': ['exact'],
+                        'category__name': ['exact']}
+        interfaces = (graphene.relay.Node, )
+
+
+class AnimalNode(DjangoObjectType):
+    class Meta:
+        model = Animal
+        filter_fields = {
+            'id': ['exact'],
+            'name': ['exact', 'icontains', 'istartswith'],
+            'genus': ['exact'],
+            'is_domesticated': ['exact'],
+        }
+        interfaces = (graphene.relay.Node, )
+
+
+class AnimalFilter(django_filters.FilterSet):
+    
+    name = django_filters.CharFilter(lookup_expr='iexact')
+
+    class Meta:
+        model = Animal
+        fields = ['id', 'name', 'genus', 'is_domesticated']
+
+    @property
+    def qs(self):
+        return super(AnimalFilter, self).qs.all()
+
+
+class PostNode(DjangoObjectType):
+    class Meta:
+        model = Post
+        only_fields = ['title']
+        filter_fields = ['content']
+        interfaces = (graphene.relay.Node,)
+
+
 class Query(object):
     category = graphene.Field(CategoryType,
                               id=graphene.Int(),
@@ -24,6 +79,14 @@ class Query(object):
                                 id=graphene.Int(),
                                 name=graphene.String())
     all_ingredients = graphene.List(IngredientType)
+    node_category = graphene.relay.Node.Field(CategoryNode)
+    node_all_category = DjangoFilterConnectionField(CategoryNode)
+    node_ingredient = graphene.relay.Node.Field(IngredientNode)
+    node_all_ingredient = DjangoFilterConnectionField(IngredientNode)
+    animal = graphene.relay.Node.Field(AnimalNode, filterset_class=AnimalFilter)
+    all_animal = DjangoFilterConnectionField(AnimalNode, filterset_class=AnimalFilter)
+    post = graphene.relay.Node.Field(PostNode)
+    all_post = DjangoFilterConnectionField(PostNode)
 
     def resolve_all_categories(self, info, **kwargs):
         return Category.objects.all()
@@ -54,3 +117,6 @@ class Query(object):
             return Ingredient.objects.get(name=name)
 
         return None
+
+    def resolve_all_post(self, info):
+        return Post.objects.filter(published=True)

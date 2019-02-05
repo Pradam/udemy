@@ -1,0 +1,12 @@
+[{"model": "ingredients.post", 
+"pk": 1, 
+"fields": {"title": "Dog", "content": "Dog", "published": true, "owner": 1 }},
+{"model": "ingredients.post", 
+"pk": 2, 
+"fields": {"title": "Dog", "content": "Dog", "published": true, "owner": 1 }},
+{"model": "ingredients.post", 
+"pk": 3, 
+"fields": {"title": "Dog", "content": "Dog", "published": true, "owner": 1 }},
+{"model": "ingredients.post", 
+"pk": 4, 
+"fields": {"title": "Dog", "content": "Dog", "published": true, "owner": 1 }}]

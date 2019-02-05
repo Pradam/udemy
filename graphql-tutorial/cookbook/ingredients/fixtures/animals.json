@@ -1,0 +1,11 @@
+[{"model": "ingredients.animal", 
+     "pk": 1, 
+     "fields": {"name": "Dog", "genus": "Dog", "is_domesticated": true }}, {"model": "ingredients.animal", 
+     "pk": 2, 
+     "fields": {"name": "Cat", "genus": "Cat", "is_domesticated": true }},{"model": "ingredients.animal", 
+     "pk": 3, 
+     "fields": {"name": "Tiger", "genus": "Cat", "is_domesticated": false }}, {"model": "ingredients.animal", 
+     "pk": 4, 
+     "fields": {"name": "Lion", "genus": "Cat", "is_domesticated": false }}, {"model": "ingredients.animal", 
+     "pk": 5, 
+     "fields": {"name": "Jaguar", "genus": "Cat", "is_domesticated": false }}]
