@@ -65,9 +65,30 @@ class AnimalFilter(django_filters.FilterSet):
 class PostNode(DjangoObjectType):
     class Meta:
         model = Post
-        only_fields = ['title']
+        only_fields = ['title', 'content']
         filter_fields = ['content']
         interfaces = (graphene.relay.Node,)
+
+
+class CreatePost(graphene.Mutation):
+    title = graphene.String()
+    content = graphene.String()
+
+    class Arguments:
+        title = graphene.String()
+        content = graphene.String()
+        owner_id = graphene.Int()
+
+    def mutate(self, info, **kwargs):
+        post = Post(**kwargs)
+        post.save()
+
+        return CreatePost(title=post.title,
+                          content=post.content)
+
+
+class Mutation(graphene.ObjectType):
+    create_post = CreatePost.Field()
 
 
 class Query(object):
@@ -117,6 +138,3 @@ class Query(object):
             return Ingredient.objects.get(name=name)
 
         return None
-
-    def resolve_all_post(self, info):
-        return Post.objects.filter(published=True)

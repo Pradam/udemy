@@ -29,6 +29,12 @@ class Animal(models.Model):
     def __str__(self):
         return self.name
 
+    def call_animal(self):
+        data = {'name': self.name,
+                'genus': self.genus,
+                'is_domesticated': 'Yes' if self.is_domesticate else 'No'}
+        return data
+
 
 class Post(models.Model):
     title = models.CharField(max_length=100)
